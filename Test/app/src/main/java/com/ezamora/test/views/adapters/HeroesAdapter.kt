@@ -8,10 +8,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ezamora.test.R
 import com.ezamora.test.databinding.HeroesItemBinding
-import com.ezamora.test.views.models.Results
 
-class HeroesAdapter : RecyclerView.Adapter<HeroesAdapter.ViewHolder>() {
-    var heroesList : ArrayList<Results> = arrayListOf()
+class HeroesAdapter(var listener: HeroesAdapterListener) : RecyclerView.Adapter<HeroesAdapter.ViewHolder>() {
+    var heroesList : ArrayList<com.ezamora.test.domain.Character> = arrayListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.heroes_item, parent, false)
@@ -27,11 +26,13 @@ class HeroesAdapter : RecyclerView.Adapter<HeroesAdapter.ViewHolder>() {
         }
 
         Glide.with(holder.binding.imgHero.context)
-            .load(listItem.thumbnail.path.replace("http", "https") + "." + listItem.thumbnail.extension)
-            .transition(
-                DrawableTransitionOptions()
-                    .crossFade())
+            .load(listItem.thumbnail.toString())
+            .transition(DrawableTransitionOptions().crossFade())
             .into(holder.binding.imgHero)
+
+        holder.itemView.setOnClickListener(View.OnClickListener {
+            listener.onHeroClicked(listItem)
+        })
     }
 
     override fun getItemCount(): Int {
